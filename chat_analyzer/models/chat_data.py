@@ -1,21 +1,19 @@
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List
 
 
+@dataclass
 class Message:
     sender: str
     date: datetime
     text: str
 
-    def __init__(self, sender: str, date: datetime, text: str):
-        self.sender = sender
-        self.date = date
-        self.text = text
 
-
+@dataclass
 class Chat:
-    participants: List[str] = []
-    messages: List[Message] = []
+    participants: List[str] = field(default_factory=list)
+    messages: List[Message] = field(default_factory=list)
 
     def add_message(self, message: Message):
         self.messages.append(message)
