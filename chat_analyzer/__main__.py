@@ -1,4 +1,4 @@
 from chat_analyzer import app
 
-if __name__ == "__main":
+if __name__ == "__main__":
     app.run()
