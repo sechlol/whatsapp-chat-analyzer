@@ -1,11 +1,16 @@
+import os
 from datetime import datetime
 
 import chat_analyzer.parsing.parser as parser
 
+def _get_path(relative_file_path: str) -> str:
+    path_to_current_file = os.path.realpath(__file__)
+    current_directory = os.path.split(path_to_current_file)[0]
+    return os.path.join(current_directory, relative_file_path)
 
 class TestParser:
     def test_parsing_no_file(self):
-        file_path = "test_files/not_exist_file.txt"
+        file_path = _get_path("test_files/not_exist_file.txt")
         try:
             parser.parse_chat(file_path)
             assert False, "missing file should raise an exception"
@@ -14,8 +19,8 @@ class TestParser:
 
     def test_parsing_no_file_multiple(self):
         file_paths = [
-            "test_files/chat_simple.txt",
-            "test_files/not_exist_file.txt",
+            _get_path("test_files/chat_simple.txt"),
+            _get_path("test_files/not_exist_file.txt"),
         ]
 
         try:
@@ -25,7 +30,7 @@ class TestParser:
             assert True
 
     def test_parser(self):
-        chat = parser.parse_chat("test_files/chat_simple.txt")
+        chat = parser.parse_chat(_get_path("test_files/chat_simple.txt"))
 
         assert len(chat.participants) == 3
         assert len(chat.messages) == 3
