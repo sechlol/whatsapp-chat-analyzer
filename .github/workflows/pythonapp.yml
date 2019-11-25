@@ -1,4 +1,4 @@
-name: Whatsapp Chat Parser
+name: Run Tests
 
 on: [push]
 
