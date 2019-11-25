@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from analysis.chat_messages_count import ChatMessageStat
+from chat_analyzer.analysis.chat_messages_count import ChatMessageStat
 
 
 def plot_messages_per_user_count(stats: ChatMessageStat):
@@ -29,7 +29,6 @@ def plot_messages_per_user_count(stats: ChatMessageStat):
     plots[2].set_title("Avg. words per msg")
     auto_label(bars, plots[2])
 
-
     fig.suptitle('Message Count Stats')
     plt.show()
 
@@ -39,7 +38,7 @@ def auto_label(bars, plots):
     for bar in bars:
         height = bar.get_height()
         plots.annotate('{}'.format(height),
-                    xy=(bar.get_x() + bar.get_width() / 2, height),
-                    xytext=(0, 3),  # 3 points vertical offset
-                    textcoords="offset points",
-                    ha='center', va='bottom')
+                       xy=(bar.get_x() + bar.get_width() / 2, height),
+                       xytext=(0, 3),  # 3 points vertical offset
+                       textcoords="offset points",
+                       ha='center', va='bottom')

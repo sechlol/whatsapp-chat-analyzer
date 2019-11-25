@@ -1,6 +1,6 @@
 import re
 from typing import List, Tuple, Optional
-from chat_data import Chat, Message
+from chat_analyzer.models.chat_data import Chat, Message
 
 
 def find_messages_with_words(word_list: List[str], chat: Chat) -> List[Message]:

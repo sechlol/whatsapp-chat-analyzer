@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, date
 from typing import Dict, List
 
-from chat_data import Chat
+from chat_analyzer.models.chat_data import Chat
 
 
 @dataclass
@@ -20,7 +20,7 @@ class MessagesPerDayStat:
         return [s.label for s in self.scores]
 
     def get_indexed_values(self) -> Dict[str, float]:
-        return {s.label:s.value for s in self.scores}
+        return {s.label: s.value for s in self.scores}
 
 
 @dataclass
@@ -29,13 +29,13 @@ class StatsWrapper:
     stats: List[MessagesPerDayStat]
 
     def get_sorted_dates(self) -> List[date]:
-       return [s.date_sent for s in self.stats]
+        return [s.date_sent for s in self.stats]
 
     def get_indexed_by_date(self) -> Dict[date, MessagesPerDayStat]:
         return {s.date_sent: s for s in self.stats}
 
     def get_indexed_by_date_raw(self) -> Dict[date, Dict[str, float]]:
-        return {s.date_sent:s.get_indexed_values() for s in self.stats}
+        return {s.date_sent: s.get_indexed_values() for s in self.stats}
 
 
 def messages_per_day_count(chat: Chat) -> StatsWrapper:

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from analysis.utils import _get_words_from_text
-from chat_data import Chat
+import chat_analyzer.analysis.utils as utils
+from chat_analyzer.models.chat_data import Chat
 
 
 @dataclass
@@ -26,7 +26,7 @@ def messages_per_user_count(chat: Chat) -> ChatMessageStat:
     participants = {}
     total_words = 0
     for message in chat.messages:
-        words_count = len(_get_words_from_text(message.text))
+        words_count = len(utils.get_words_from_text(message.text))
         prev_count = participants.get(message.sender, (0, 0))
 
         # [0] = total message count

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from analysis.chat_time_stats import StatsWrapper
+from chat_analyzer.analysis.chat_time_stats import StatsWrapper
 
 
 def plot_messages_per_day_count(wrapper: StatsWrapper):

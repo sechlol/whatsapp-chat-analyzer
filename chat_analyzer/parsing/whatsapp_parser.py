@@ -1,7 +1,8 @@
 import re
 from datetime import datetime
 from typing import List
-from chat_data import Chat, Message
+
+from chat_analyzer.models.chat_data import Chat, Message
 
 
 def parse_whatsapp_file(chat_file: List[str]) -> Chat:
@@ -20,12 +21,13 @@ def parse_whatsapp_file(chat_file: List[str]) -> Chat:
             last_message = Message(
                 date=datetime(year=year, month=month, day=day, hour=hour, minute=minute),
                 sender=match.group(6),
-                text=match.group(7))
+                text=match.group(7).rstrip())
 
             chat.add_message(last_message)
 
         elif last_message:
             # these are messages that contain text with newlines. Append them to the previous message
-            last_message.text = last_message.text.replace("/n", " ") + line
+            # last_message.text = last_message.text.replace("/n", " ") + line
+            last_message.text = f"{last_message.text} {line.rstrip()}"
 
     return chat
