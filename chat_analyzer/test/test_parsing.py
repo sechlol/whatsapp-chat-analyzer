@@ -1,37 +1,27 @@
-import os
 from datetime import datetime
 
-import chat_analyzer.parsing.parser as parser
+import pytest
 
-def _get_path(relative_file_path: str) -> str:
-    path_to_current_file = os.path.realpath(__file__)
-    current_directory = os.path.split(path_to_current_file)[0]
-    return os.path.join(current_directory, relative_file_path)
+import chat_analyzer.parsing.parser as parser
+from chat_analyzer.test.utils import get_test_path
+
 
 class TestParser:
     def test_parsing_no_file(self):
-        file_path = _get_path("test_files/not_exist_file.txt")
-        try:
-            parser.parse_chat(file_path)
-            assert False, "missing file should raise an exception"
-        except FileNotFoundError:
-            assert True
+        file_path = get_test_path("not_exist_file.txt")
+        with pytest.raises(Exception):
+            parser.load(file_path)
 
-    def test_parsing_no_file_multiple(self):
-        file_paths = [
-            _get_path("test_files/chat_simple.txt"),
-            _get_path("test_files/not_exist_file.txt"),
-        ]
-
-        try:
-            parser.parse_chat_multiple(file_paths)
-            assert False, "missing files should raise an exception"
-        except FileNotFoundError:
-            assert True
+    def test_parsing_wildcard(self):
+        file_path = get_test_path("chat_simple_*.txt")
+        chats = parser.load(file_path)
+        assert len(chats) == 2
 
     def test_parser(self):
-        chat = parser.parse_chat(_get_path("test_files/chat_simple.txt"))
+        chats = parser.load(get_test_path("chat_simple_1.txt"))
+        assert len(chats) == 1
 
+        chat = chats[0]
         assert len(chat.participants) == 3
         assert len(chat.messages) == 3
 
@@ -45,6 +35,3 @@ class TestParser:
 
         assert "ਡ" in chat.messages[1].text
         assert chat.messages[2].text == "dolor sit amet"
-
-
-

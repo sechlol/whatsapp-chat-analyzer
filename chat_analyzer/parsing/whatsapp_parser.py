@@ -5,8 +5,8 @@ from typing import List
 from chat_analyzer.models.chat_data import Chat, Message
 
 
-def parse_whatsapp_file(chat_file: List[str]) -> Chat:
-    chat = Chat()
+def parse_whatsapp_file(chat_file: List[str], file_name: str) -> Chat:
+    chat = Chat(name=file_name)
     last_message = None
 
     for line in chat_file:

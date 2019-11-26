@@ -15,7 +15,7 @@ def plot_messages_per_day_count(wrapper: StatsWrapper):
         cumulative = np.add(cumulative, sender_y)
 
     plt.legend(wrapper.legend)
-    plt.show()
+    return plt
 
 def plot_initiation_score_per_day(wrapper: StatsWrapper):
     sorted_dates = wrapper.get_sorted_dates()
@@ -26,4 +26,4 @@ def plot_initiation_score_per_day(wrapper: StatsWrapper):
         plt.plot(sorted_dates, sender_y)
 
     plt.legend(wrapper.legend)
-    plt.show()
+    return plt

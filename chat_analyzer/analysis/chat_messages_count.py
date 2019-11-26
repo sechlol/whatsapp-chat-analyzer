@@ -1,25 +1,5 @@
-from dataclasses import dataclass
-from typing import List
-
 import chat_analyzer.analysis.utils as utils
-from chat_analyzer.models.chat_data import Chat
-
-
-@dataclass
-class UserMessageStat:
-    username: str
-    message_count: int
-    message_percent: float
-    word_count: int
-    word_percent: float
-    avg_words_per_message: float
-
-
-@dataclass
-class ChatMessageStat:
-    total_messages_count: int
-    total_words_count: int
-    user_stats: List[UserMessageStat]
+from chat_analyzer.models.chat_data import Chat, ChatMessageStat, UserMessageStat
 
 
 def messages_per_user_count(chat: Chat) -> ChatMessageStat:

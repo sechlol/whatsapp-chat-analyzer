@@ -1,41 +1,7 @@
-from dataclasses import dataclass
 from datetime import datetime, timedelta, date
 from typing import Dict, List
 
-from chat_analyzer.models.chat_data import Chat
-
-
-@dataclass
-class Score:
-    label: str
-    value: float
-
-
-@dataclass
-class MessagesPerDayStat:
-    date_sent: date
-    scores: List[Score]
-
-    def get_labels(self) -> List[str]:
-        return [s.label for s in self.scores]
-
-    def get_indexed_values(self) -> Dict[str, float]:
-        return {s.label: s.value for s in self.scores}
-
-
-@dataclass
-class StatsWrapper:
-    legend: List[str]
-    stats: List[MessagesPerDayStat]
-
-    def get_sorted_dates(self) -> List[date]:
-        return [s.date_sent for s in self.stats]
-
-    def get_indexed_by_date(self) -> Dict[date, MessagesPerDayStat]:
-        return {s.date_sent: s for s in self.stats}
-
-    def get_indexed_by_date_raw(self) -> Dict[date, Dict[str, float]]:
-        return {s.date_sent: s.get_indexed_values() for s in self.stats}
+from chat_analyzer.models.chat_data import Chat, StatsWrapper, MessagesPerDayStat, Score
 
 
 def messages_per_day_count(chat: Chat) -> StatsWrapper:
@@ -52,7 +18,7 @@ def messages_per_day_count(chat: Chat) -> StatsWrapper:
     return _sort_and_format_messages_per_date(days)
 
 
-def chat_engagement(chats: List[Chat], subject: str) -> StatsWrapper:
+def chat_engagement(chats: List[Chat], subject: str, **kwargs) -> StatsWrapper:
     engagement = dict()
 
     for chat in chats:
@@ -61,7 +27,6 @@ def chat_engagement(chats: List[Chat], subject: str) -> StatsWrapper:
 
         participants = chat.participants[:]
         participants.remove(subject)
-        chat_name = ", ".join(participants)
 
         for message in chat.messages:
             if message.sender != subject:
@@ -71,8 +36,8 @@ def chat_engagement(chats: List[Chat], subject: str) -> StatsWrapper:
             if date_sent not in engagement:
                 engagement[date_sent] = {}
 
-            sent_count = engagement[date_sent].get(chat_name, 0)
-            engagement[date_sent][chat_name] = sent_count + 1
+            sent_count = engagement[date_sent].get(chat.name, 0)
+            engagement[date_sent][chat.name] = sent_count + 1
 
     return _sort_and_format_messages_per_date(engagement)
 
@@ -96,7 +61,7 @@ def initiation_score_per_day(chat: Chat) -> StatsWrapper:
     return StatsWrapper(legend=chat.participants, stats=initiation)
 
 
-def initiation_score_per_interval(chat: Chat, hour_interval: int) -> StatsWrapper:
+def initiation_score_per_interval(chat: Chat, hour_interval: int, **kwargs) -> StatsWrapper:
     last_date = datetime.min
     initiation = []
     scores = {name: 0 for name in chat.participants}

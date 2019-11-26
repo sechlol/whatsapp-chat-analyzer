@@ -30,7 +30,7 @@ def plot_messages_per_user_count(stats: ChatMessageStat):
     auto_label(bars, plots[2])
 
     fig.suptitle('Message Count Stats')
-    plt.show()
+    return plt
 
 
 def auto_label(bars, plots):
