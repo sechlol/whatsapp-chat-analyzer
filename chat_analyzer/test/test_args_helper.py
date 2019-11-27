@@ -11,6 +11,12 @@ class TestArgsHelper:
         "./file.txt --out ./not_exist/",
     ]
 
+    def test_accepts_multiple_words_subject(self):
+        name = "Name Surname"
+        args_input = f"./file.txt --engagement {name}"
+        args = get_args(args_input.split())
+        assert args.analyses[0].optional_par["subject"] == name
+
     def test_accepts_min_parameters(self):
         args_input = "./file.txt --chat_stats"
         args = get_args(args_input.split())

@@ -4,6 +4,7 @@ from typing import List
 
 from chat_analyzer.models.app_data import AnalysisType, OutputFormat, AnalysisResult, AppArgs
 from chat_analyzer.visualization.plot_messages_count import plot_messages_per_user_count
+from chat_analyzer.visualization.plot_rank import plot_words_rank
 from chat_analyzer.visualization.plot_time_serie import plot_messages_per_day_count, plot_initiation_score_per_day
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,7 @@ def _plot(results_list: List[AnalysisResult], args: AppArgs):
         AnalysisType.INITIATION_SCORES: plot_initiation_score_per_day,
         AnalysisType.ENGAGEMENT_SCORE: plot_initiation_score_per_day,
         AnalysisType.MESSAGES_PER_DAY: plot_messages_per_day_count,
+        AnalysisType.WORDS_MOST_USED: plot_words_rank,
     }
 
     for result in results_list:

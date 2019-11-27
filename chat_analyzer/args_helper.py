@@ -31,6 +31,7 @@ arg_parser.add_argument("--initiation",
 arg_parser.add_argument("--engagement",
                         action="store",
                         type=str,
+                        nargs="+",
                         default=argparse.SUPPRESS,
                         metavar="subject",
                         help="Shows the engagement of one person (subject) with other partecipants over time. Must specify [subject: str]")
@@ -89,7 +90,7 @@ def get_args(manual_args: Optional[List[str]] = None) -> AppArgs:
         analysis_list.append(
             AnalysisArgs(
                 AnalysisType.ENGAGEMENT_SCORE,
-                {"subject": engagement},
+                {"subject": " ".join(engagement)},
             ))
     if word_rank:
         analysis_list.append(
