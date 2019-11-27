@@ -1,7 +1,10 @@
-from chat_analyzer.analysis.analyzer import AnalysisType, analyze
+import pytest
+
+from chat_analyzer.analysis.analyzer import analyze
+from chat_analyzer.models.app_data import AnalysisType, OutputFormat, AppArgs, AnalysisArgs
 from chat_analyzer.parsing.parser import load
 from chat_analyzer.test.utils import get_test_path
-from chat_analyzer.visualization.visualizer import OutputFormat, output
+from chat_analyzer.visualization.visualizer import output
 
 params = {
     "hour_interval": 1,
@@ -10,17 +13,18 @@ params = {
 
 
 class TestApp():
-    def test_all_analysis_json(self):
-        all_analysis = [t for t in AnalysisType]
-        output_format = OutputFormat.JSON
+
+    @pytest.mark.parametrize("out_format", [OutputFormat.PLOT_PNG])
+    def test_all_analysis_json(self, out_format):
+        all_analysis = [AnalysisArgs(t, params) for t in AnalysisType]
         path = get_test_path("*.txt")
+        args = AppArgs(path, get_test_path("."), out_format, all_analysis)
 
-        chats = load(path)
-        for t in all_analysis:
-            data = analyze(t, chats, **params)
-            assert data is not None
+        chats = load(args)
+        results = analyze(chats, args)
+        assert results is not None
 
-            output(output_format, t, data)
+        output(results, args)
 
     def test_supported_analysis_plot(self):
         all_analysis = [
@@ -29,7 +33,7 @@ class TestApp():
             AnalysisType.INITIATION_SCORES,
             AnalysisType.ENGAGEMENT_SCORE,
         ]
-        output_format = OutputFormat.CHART_IMG
+        output_format = OutputFormat.PLOT_PNG
         path = get_test_path("*.txt")
 
         chats = load(path)

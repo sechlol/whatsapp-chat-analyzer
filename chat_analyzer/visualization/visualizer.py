@@ -1,63 +1,63 @@
 import json
-from enum import Enum
+import logging
 from typing import List
 
-from chat_analyzer.analysis.analyzer import AnalysisType
-from chat_analyzer.analysis.chat_messages_count import ChatMessageStat
-from chat_analyzer.analysis.chat_time_stats import StatsWrapper
+from chat_analyzer.models.app_data import AnalysisType, OutputFormat, AnalysisResult, AppArgs
 from chat_analyzer.visualization.plot_messages_count import plot_messages_per_user_count
 from chat_analyzer.visualization.plot_time_serie import plot_messages_per_day_count, plot_initiation_score_per_day
 
-
-class OutputFormat(Enum):
-    JSON = 1
-    CHART_UI = 2
-    CHART_IMG = 3
+logger = logging.getLogger(__name__)
 
 
-def output(out_mode: OutputFormat, analysis: AnalysisType, data_list: List):
-    if out_mode == OutputFormat.JSON:
-        _write_json(data_list)
-        return
+def output(results_list: List[AnalysisResult], args: AppArgs):
+    if args.out_format == OutputFormat.JSON:
+        for result in results_list:
+            _write_json(result, args.out_path)
 
-    if not isinstance(data_list, list):
-        data_list = [data_list]
-
-    _plot(out_mode, analysis, data_list)
+    else:
+        _plot(results_list, args)
 
 
-def _plot(out_mode: OutputFormat, analysis: AnalysisType, data_list):
-    for index, data in enumerate(data_list):
-        if isinstance(data, ChatMessageStat):
-            plot = plot_messages_per_user_count(data)
-        elif isinstance(data, StatsWrapper):
-            if analysis == AnalysisType.INITIATION_SCORES or analysis == AnalysisType.ENGAGEMENT_SCORE:
-                plot = plot_initiation_score_per_day(data)
-            elif analysis == AnalysisType.MESSAGES_PER_DAY:
-                plot = plot_messages_per_day_count(data)
-            else:
-                raise Exception(f"Plotting for analysis mode {analysis.name} is not supported")
-        else:
-            raise Exception(f"Plotting of data type {type(data)} is not supported")
+def _plot(results_list: List[AnalysisResult], args: AppArgs):
+    function_map = {
+        AnalysisType.MESSAGES_COUNT: plot_messages_per_user_count,
+        AnalysisType.INITIATION_SCORES: plot_initiation_score_per_day,
+        AnalysisType.ENGAGEMENT_SCORE: plot_initiation_score_per_day,
+        AnalysisType.MESSAGES_PER_DAY: plot_messages_per_day_count,
+    }
 
-        if out_mode == OutputFormat.CHART_UI:
+    for result in results_list:
+        plotting_function = function_map.get(result.args.type)
+        if not plotting_function:
+            logger.warning(f"Plotting for analysis mode {result.args.type.name} is not supported. Fallback to JSON")
+            _write_json(result, args.out_path)
+            continue
+
+        plot = plotting_function(result.data)
+
+        if args.out_format == OutputFormat.PLOT_UI:
             plot.show()
-        elif out_mode == OutputFormat.CHART_IMG:
-            filename = f"chat_plot_{index}.png"
-            plot.savefig(filename)
+        elif args.out_format == OutputFormat.PLOT_PNG:
+            plot.savefig(f"{args.out_path}/{result.name}_{result.args.type.name}.png")
+
+        # Must clear the plot or it will overlap with the next one
         plot.clf()
 
 
-def _write_json(data):
-    json_data = _to_json_recursive(data)
-    with open("chat_data.json", 'w') as f:
+def _write_json(result: AnalysisResult, out_path: str):
+    json_data = _to_json_recursive(result.data)
+    with open(f"{out_path}/{result.name}_{result.args.type.name}.json", 'w') as f:
         json.dump(json_data, f)
 
+
 def _to_json_recursive(data):
+    # if object has a to_json method, call it and return the result
+    to_json_method = getattr(data, "to_json", None)
+    if callable(to_json_method):
+        return to_json_method()
+
+    # if data is a list, recursively go through each element
     if isinstance(data, list):
         return [_to_json_recursive(d) for d in data]
-
-    if isinstance(data, ChatMessageStat) or isinstance(data, StatsWrapper):
-        return data.to_json()
 
     return data

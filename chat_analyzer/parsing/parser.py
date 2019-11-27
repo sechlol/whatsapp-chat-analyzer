@@ -3,12 +3,13 @@ import ntpath
 import os
 from typing import List, Optional
 
+from chat_analyzer.models.app_data import AppArgs
 from chat_analyzer.models.chat_data import Chat
 from chat_analyzer.parsing.whatsapp_parser import parse_whatsapp_file
 
 
-def load(path_pattern) -> Optional[List[Chat]]:
-    chats = [_parse_chat(file) for file in glob.glob(path_pattern)]
+def load(args: AppArgs) -> Optional[List[Chat]]:
+    chats = [_parse_chat(file) for file in glob.glob(args.in_files_path)]
     if len(chats) == 0:
         raise Exception("No files found.")
     return chats
