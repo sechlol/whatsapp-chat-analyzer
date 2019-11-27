@@ -4,7 +4,6 @@ import chat_analyzer.analysis.analyzer as analyzer
 import chat_analyzer.visualization.visualizer as visualizer
 
 
-
 def run():
     args = args_helper.get_args()
 
@@ -13,4 +12,3 @@ def run():
     visualizer.output(results, args)
 
     print("All is done")
-

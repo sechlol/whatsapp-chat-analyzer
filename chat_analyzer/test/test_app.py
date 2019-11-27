@@ -1,3 +1,6 @@
+import glob
+import os
+
 import pytest
 
 from chat_analyzer.analysis.analyzer import analyze
@@ -14,8 +17,8 @@ params = {
 
 class TestApp():
 
-    @pytest.mark.parametrize("out_format", [OutputFormat.PLOT_PNG])
-    def test_all_analysis_json(self, out_format):
+    @pytest.mark.parametrize("out_format", [OutputFormat.JSON, OutputFormat.PLOT_PNG])
+    def test_run_all_analyses(self, out_format):
         all_analysis = [AnalysisArgs(t, params) for t in AnalysisType]
         path = get_test_path("*.txt")
         args = AppArgs(path, get_test_path("."), out_format, all_analysis)
@@ -26,19 +29,9 @@ class TestApp():
 
         output(results, args)
 
-    def test_supported_analysis_plot(self):
-        all_analysis = [
-            AnalysisType.MESSAGES_PER_DAY,
-            AnalysisType.MESSAGES_COUNT,
-            AnalysisType.INITIATION_SCORES,
-            AnalysisType.ENGAGEMENT_SCORE,
-        ]
-        output_format = OutputFormat.PLOT_PNG
-        path = get_test_path("*.txt")
-
-        chats = load(path)
-        for t in all_analysis:
-            data = analyze(t, chats, **params)
-            assert data is not None
-
-            output(output_format, t, data)
+    @classmethod
+    def teardown_class(cls):
+        patterns = ["chat_simple_1_*.*", "chat_simple_2_*.*"]
+        for pattern in patterns:
+            for file in glob.glob(get_test_path(pattern)):
+                os.remove(file)

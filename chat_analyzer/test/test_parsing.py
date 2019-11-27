@@ -3,22 +3,27 @@ from datetime import datetime
 import pytest
 
 import chat_analyzer.parsing.parser as parser
+from chat_analyzer.models.app_data import AppArgs
 from chat_analyzer.test.utils import get_test_path
 
 
 class TestParser:
     def test_parsing_no_file(self):
         file_path = get_test_path("not_exist_file.txt")
+        args = AppArgs(file_path, "", None, [])
         with pytest.raises(Exception):
-            parser.load(file_path)
+            parser.load(args)
 
     def test_parsing_wildcard(self):
         file_path = get_test_path("chat_simple_*.txt")
-        chats = parser.load(file_path)
+        args = AppArgs(file_path, "", None, [])
+        chats = parser.load(args)
         assert len(chats) == 2
 
     def test_parser(self):
-        chats = parser.load(get_test_path("chat_simple_1.txt"))
+        file_path = get_test_path("chat_simple_1.txt")
+        args = AppArgs(file_path, "", None, [])
+        chats = parser.load(args)
         assert len(chats) == 1
 
         chat = chats[0]

@@ -17,6 +17,7 @@ def plot_messages_per_day_count(wrapper: StatsWrapper):
     plt.legend(wrapper.legend)
     return plt
 
+
 def plot_initiation_score_per_day(wrapper: StatsWrapper):
     sorted_dates = wrapper.get_sorted_dates()
     indexed_raw = wrapper.get_indexed_by_date_raw()
