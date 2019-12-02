@@ -28,3 +28,17 @@ def plot_initiation_score_per_day(wrapper: StatsWrapper):
 
     plt.legend(wrapper.legend)
     return plt
+
+def plot_engagement(wrapper: StatsWrapper):
+    legend = wrapper.legend
+
+    x_dates = [stat.date_sent for stat in wrapper.stats]
+    y_vals = []
+
+    for label in legend:
+        y_vals.append([stat.get_indexed_values().get(label, 0) for stat in wrapper.stats])
+
+    plt.stackplot(x_dates, y_vals)
+    plt.legend(wrapper.legend, loc='upper left')
+
+    return plt

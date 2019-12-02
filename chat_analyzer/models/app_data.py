@@ -36,4 +36,3 @@ class AnalysisResult:
     name: str
     data: Any
     args: AnalysisArgs
-
