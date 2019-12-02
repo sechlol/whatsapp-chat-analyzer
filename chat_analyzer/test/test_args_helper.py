@@ -51,7 +51,7 @@ class TestArgsHelper:
         assert args.analyses[2].optional_par["hour_interval"] == 1
         assert args.analyses[3].optional_par["subject"] == "aaa"
         assert args.analyses[4].optional_par["limit"] == 3
-        assert args.analyses[4].optional_par["min_size"] == 4
+        assert args.analyses[4].optional_par["min_length"] == 4
 
     @pytest.mark.parametrize("args_input", exception_input)
     def test_args_raise_exception(self, args_input):

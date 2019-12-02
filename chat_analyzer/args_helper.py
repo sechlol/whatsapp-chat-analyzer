@@ -96,7 +96,7 @@ def get_args(manual_args: Optional[List[str]] = None) -> AppArgs:
         analysis_list.append(
             AnalysisArgs(
                 AnalysisType.WORDS_MOST_USED,
-                {"limit": word_rank[0], "min_size": word_rank[1]}
+                {"limit": word_rank[0], "min_length": word_rank[1]}
             ))
 
     if not analysis_list:
