@@ -17,4 +17,4 @@ python-dateutil==2.8.1
 RandomWords==0.2.1
 six==1.13.0
 wcwidth==0.1.7
-zipp==0.6.0
+zipp==3.19.1
